@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useEffect, useRef } from 'react'
 import { motion, useMotionValue, useScroll, useSpring, useTransform } from 'framer-motion'
 import { ArrowDown, ExternalLink } from 'lucide-react'
@@ -162,9 +163,13 @@ export default function HeroSection() {
         >
           <div className="pixel-panel pixel-cut bg-pixel p-3">
             <div className="border-2 border-ink bg-paper p-2">
-              <img
+              <Image
                 src={siteData.assets.hero}
                 alt="Open source pixel icons poster aesthetic reference"
+                width={900}
+                height={675}
+                priority
+                sizes="(min-width: 1024px) 460px, 92vw"
                 className="aspect-[4/3] w-full object-cover"
               />
             </div>

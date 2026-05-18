@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { X } from 'lucide-react'
@@ -34,9 +35,12 @@ export default function CreativeWorksSection() {
                 className="group w-full border-2 border-ink bg-paper p-3 text-left shadow-[8px_8px_0_#111111]"
               >
                 <div className="overflow-hidden border-2 border-ink bg-pixel">
-                  <img
+                  <Image
                     src={work.image}
                     alt={work.title}
+                    width={1200}
+                    height={900}
+                    sizes="(min-width: 1024px) 50vw, 92vw"
                     className="aspect-[4/3] w-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
                 </div>
@@ -82,7 +86,14 @@ export default function CreativeWorksSection() {
               >
                 <X size={18} />
               </button>
-              <img src={active.image} alt={active.title} className="max-h-[78vh] w-full object-contain" />
+              <Image
+                src={active.image}
+                alt={active.title}
+                width={1400}
+                height={1050}
+                sizes="92vw"
+                className="max-h-[78vh] w-full object-contain"
+              />
             </motion.div>
           </motion.div>
         )}

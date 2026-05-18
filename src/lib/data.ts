@@ -25,7 +25,7 @@ export const siteData = {
     ]
   },
   contact: {
-    email: '2400033157@kluniversity.in',
+    email: 'khyatikvl@gmail.com',
     github: 'https://github.com/kl2400033157',
     linkedin:
       'https://www.linkedin.com/in/khyati-kvl-7b7969364/'
@@ -73,9 +73,9 @@ export const siteData = {
     description:
       'A real-time interaction and sharing platform built with Socket.IO and modern frontend architecture.',
     tech: ['React', 'Socket.IO', 'JavaScript', 'APIs', 'Realtime UX'],
-    github: 'https://github.com/kl2400033157',
+    github: 'https://github.com/kl2400033157/frontendproject-38',
     linkedin:
-      'https://www.linkedin.com/in/khyati-kvl-7b7969364/',
+      'https://www.linkedin.com/posts/khyati-kvl-7b7969364_socketio-share-7377660170614579200-ZtXf?utm_source=share&utm_medium=member_android&rcm=ACoAAFItNBwBglPv_O7W15UUwf5lO8z8twaceBQ',
     highlights: [
       'Realtime event-driven sharing flow',
       'Modern frontend architecture',

@@ -7,12 +7,45 @@ import SectionReveal from '@/components/ui/SectionReveal'
 import { siteData } from '@/lib/data'
 
 export default function ContactSection() {
-  const [sent, setSent] = useState(false)
+  const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
+  const [errorMessage, setErrorMessage] = useState('')
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    setSent(true)
-    window.setTimeout(() => setSent(false), 3000)
+    setStatus('sending')
+    setErrorMessage('')
+
+    const form = event.currentTarget
+    const formData = new FormData(form)
+    const payload = {
+      name: String(formData.get('name') ?? ''),
+      email: String(formData.get('email') ?? ''),
+      message: String(formData.get('message') ?? '')
+    }
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+
+      if (!response.ok) {
+        const data = (await response.json().catch(() => null)) as { error?: string } | null
+        throw new Error(data?.error ?? 'Contact request failed')
+      }
+
+      form.reset()
+      setStatus('sent')
+      window.setTimeout(() => setStatus('idle'), 3500)
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : 'Signal failed. Check the sender setup in Resend, then try again.'
+      )
+      setStatus('error')
+    }
   }
 
   return (
@@ -49,8 +82,8 @@ export default function ContactSection() {
               <div className="mt-8 space-y-3">
                 {[
                   { icon: Mail, label: 'Email', href: `mailto:${siteData.contact.email}`, text: siteData.contact.email },
-                  { icon: Github, label: 'GitHub', href: siteData.contact.github, text: 'SocketIO Share repository' },
-                  { icon: Linkedin, label: 'LinkedIn', href: siteData.contact.linkedin, text: 'Project launch post' }
+                  { icon: Github, label: 'GitHub', href: siteData.contact.github, text: 'Main GitHub profile' },
+                  { icon: Linkedin, label: 'LinkedIn', href: siteData.contact.linkedin, text: 'Main LinkedIn profile' }
                 ].map(({ icon: Icon, label, href, text }) => (
                   <a
                     key={label}
@@ -81,6 +114,7 @@ export default function ContactSection() {
                   <span className="font-mono text-[10px] font-black uppercase tracking-[0.18em]">Name</span>
                   <input
                     required
+                    name="name"
                     className="mt-2 w-full border-2 border-ink bg-paper px-4 py-3 font-mono text-sm outline-none focus:bg-pixel/30"
                     placeholder="Your name"
                   />
@@ -89,6 +123,7 @@ export default function ContactSection() {
                   <span className="font-mono text-[10px] font-black uppercase tracking-[0.18em]">Email</span>
                   <input
                     required
+                    name="email"
                     type="email"
                     className="mt-2 w-full border-2 border-ink bg-paper px-4 py-3 font-mono text-sm outline-none focus:bg-pixel/30"
                     placeholder="you@example.com"
@@ -99,19 +134,26 @@ export default function ContactSection() {
                 <span className="font-mono text-[10px] font-black uppercase tracking-[0.18em]">Message</span>
                 <textarea
                   required
+                  name="message"
                   rows={6}
                   className="mt-2 w-full resize-none border-2 border-ink bg-paper px-4 py-3 font-mono text-sm outline-none focus:bg-pixel/30"
                   placeholder="Tell Khyati about the idea..."
                 />
               </label>
               <motion.button
+                disabled={status === 'sending'}
                 whileHover={{ y: -3 }}
                 whileTap={{ scale: 0.98 }}
-                className="mt-5 inline-flex w-full items-center justify-center gap-2 border-2 border-ink bg-pixel px-5 py-4 font-mono text-xs font-black uppercase tracking-[0.15em] text-ink shadow-[5px_5px_0_#111111]"
+                className="mt-5 inline-flex w-full items-center justify-center gap-2 border-2 border-ink bg-pixel px-5 py-4 font-mono text-xs font-black uppercase tracking-[0.15em] text-ink shadow-[5px_5px_0_#111111] disabled:translate-y-0 disabled:cursor-wait disabled:opacity-70"
               >
                 <Send size={15} />
-                {sent ? 'Transmission queued' : 'Send message'}
+                {status === 'sending' ? 'Sending signal...' : status === 'sent' ? 'Transmission sent' : 'Send message'}
               </motion.button>
+              {status === 'error' ? (
+                <p className="mt-4 border-2 border-ink bg-violet px-4 py-3 font-mono text-xs font-black uppercase tracking-[0.12em] text-paper">
+                  {errorMessage}
+                </p>
+              ) : null}
             </form>
           </SectionReveal>
         </div>
